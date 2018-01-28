@@ -4,42 +4,39 @@ public class Main {
     public static void main(String[] args) {
         int a = new Scanner(System.in).nextInt();
         System.out.println(new Main().Hexadecimal(a));
-     
     }
-    private String Hexadecimal(int a){
-        if(0==a)
+
+    private String Hexadecimal(int a) {
+        if (0 == a)
             return "0";
-        String decimal="";
+        StringBuilder decimal = new StringBuilder("");
         while (a != 0) {
             int remaind = a % 16;
-            if (remaind > 9) {
-                switch (remaind - 10) {
-                case 0:
-                    decimal = "A"+decimal;
-                    break;
-                case 1:
-                    decimal = "B"+decimal;
-                    break;
-                case 2:
-                    decimal = "C"+decimal;
-                    break;
-                case 3:
-                    decimal = "D"+decimal;
-                    break;
-                case 4:
-                    decimal = "E"+decimal;
-                    break;
-                case 5:
-                    decimal = "F"+decimal;
-                    break;
-                default:
-                    break;
-                }
+            switch (remaind) {
+            case 10:
+                decimal.insert(0, "A");
+                break;
+            case 11:
+                decimal.insert(0, "B");
+                break;
+            case 12:
+                decimal.insert(0, "C");
+                break;
+            case 13:
+                decimal.insert(0, "D");
+                break;
+            case 14:
+                decimal.insert(0, "E");
+                break;
+            case 15:
+                decimal.insert(0, "F");
+                break;
+            default:
+                decimal.insert(0, String.valueOf(remaind));
+                break;
             }
-            else
-                decimal=remaind+decimal;
-            a>>=4;
+            a >>= 4;
         }
-        return decimal;
+        return decimal.toString();
     }
 }
