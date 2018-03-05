@@ -4,7 +4,9 @@ import java.util.*;
 
 //有错误
 public class Main {
+    //深度搜索的方向
     int[][] path = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
+    //minstep:最小步数，sum:搜索的点的值的总和
     int minstep = 999, sum = 0;
 
     public static void main(String[] args) {
@@ -27,16 +29,17 @@ public class Main {
 
     }
 
+    //返回最小格子数
     private int min(int[][] a) {
         // 深度函数参数
-        int target = 0, sum = 0;
+        int target = 0, _length = 0;
         for (int i = 0; i < a.length; i++)
             for (int j = 0; j < a[0].length; j++)
                 target += a[i][j];
         if (0 == target % 2) {
             int[][] re_a = new int[a.length][a[0].length], book = new int[a.length][a[0].length];
             book[0][0] = 1;
-            this.sum = a[0][0];
+            sum = a[0][0];
 
             // 找出目标数组re_a，统计个数并返回（可以直接输出minstep）
             minlength(a, book, 1, 0, 0, target / 2, re_a);
@@ -44,12 +47,12 @@ public class Main {
                 for (int j = 0; j < a[0].length; j++) {
                     // System.out.print(re_a[i][j]);
                     if (1 == re_a[i][j])
-                        sum++;
+                        _length++;
                 }
                 // System.out.println();
             }
-            //sum=minstep;
-            return sum;
+            //_length=minstep;
+            return _length;
         } else
             return 0;
     }
@@ -104,7 +107,7 @@ public class Main {
     }
 
     // 深度
-    ///a:要求录入的数组，book:深度优先搜索用来标记已用过，step：记录步数，x，y:数组坐标，target:要求搜索的点的值总和等于target，re_a:存放符合条件的数组（非必须，但能监控过程）
+    ///a:要求录入的数组，book:深度优先搜索用来标记已用过，step：记录步数，x，y:数组坐标，target:要求两区域的值总和相等（target为所有点值总和的一半），re_a:存放符合条件的数组（非必须，但能监控过程）
     private void minlength(int[][] a, int[][] book, int step, int x, int y, int target, int[][] re_a) {
         if (sum < target) {
             for (int i = 0; i < 4; i++) {
