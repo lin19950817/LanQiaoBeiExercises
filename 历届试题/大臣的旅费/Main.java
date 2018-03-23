@@ -18,7 +18,6 @@ public class Main {
         }
         // Input End
         
-
         DistanceOfTheCity theFurthestCity = new Main().answer(n, adjacencyMaxtrix);
         System.out.println(theFurthestCity.expense);
         
@@ -35,21 +34,24 @@ public class Main {
 //        a[3][1] = 5;
 //        a[4][1] = 4;
 //        DistanceOfTheCity theFurthestCity = m.answer(5, a);
+//        System.out.println(theFurthestCity.startCity+"\t"+theFurthestCity.endCity+"\t"+theFurthestCity.distance+"\t"+theFurthestCity.expense);
 //        System.out.println("大臣J从城市" + theFurthestCity.startCity + "到城市" + theFurthestCity.endCity + "要花费" + theFurthestCity.expense + "的路费。");
     }
     
     private DistanceOfTheCity answer(int cityCount, int[][] adjacencyMatrix) {
-        DistanceOfTheCity theFurthestCity = null;
-        
+        DistanceOfTheCity theFurthestCity = new DistanceOfTheCity(0, 0, 0);
+        DistanceOfTheCity tempTheFurthestCity = new DistanceOfTheCity(0, 0, 0);
         for (int i = 0; i < cityCount; i++) {
             boolean[] blBook = new boolean[cityCount];
             blBook[i] = true;
-            DistanceOfTheCity tempTheFurthestCity = new DistanceOfTheCity(0, 0, 0);
-            DistanceOfTheCity cityInformation = new DistanceOfTheCity(i, 0, 0);
-            distanceOfTheCity(cityCount, adjacencyMatrix, blBook, i, cityInformation, tempTheFurthestCity);
-            if (null == theFurthestCity || tempTheFurthestCity.distance > theFurthestCity.distance) {
-                theFurthestCity = tempTheFurthestCity;
+            tempTheFurthestCity.startCity = i;
+            distanceOfTheCity(cityCount, adjacencyMatrix, blBook, i, 0, tempTheFurthestCity);
+            if (tempTheFurthestCity.distance > theFurthestCity.distance) {
+                theFurthestCity.startCity = tempTheFurthestCity.startCity;
+                theFurthestCity.endCity = tempTheFurthestCity.endCity;
+                theFurthestCity.distance = tempTheFurthestCity.distance;
             }
+            tempTheFurthestCity.distance = 0;
         }
         theFurthestCity.expense = travelExpense(theFurthestCity.distance);
         // adjacencyMatrix是从零开始的，所以开始和结束城市都要加1；
@@ -62,20 +64,17 @@ public class Main {
      * 计算当前城市到其他任何城市的最远距离
      * 参数：adjacencyMatrix：存放城市间距离的岭接矩阵，blBook：记录城市是否已去过，cityInformation：记录遍历过程中城市信息，theFurthestCity：最远城市
      * */
-    private void distanceOfTheCity(int cityCount, int[][] adjacencyMatrix, boolean[] blBook, int currentCity, DistanceOfTheCity cityInformation, DistanceOfTheCity theFurthestCity) {
-        if (cityInformation.distance > theFurthestCity.distance) {
-            theFurthestCity.startCity = cityInformation.startCity;
+    private void distanceOfTheCity(int cityCount, int[][] adjacencyMatrix, boolean[] blBook, int currentCity, int distance, DistanceOfTheCity theFurthestCity) {
+        if (distance > theFurthestCity.distance) {
             theFurthestCity.endCity = currentCity;
-            theFurthestCity.distance = cityInformation.distance;
+            theFurthestCity.distance = distance;
         }
         
         for (int i = 0; i < cityCount; i++) {
             if (adjacencyMatrix[currentCity][i] != 0 && !blBook[i]) {
                 blBook[i] = true;
-                cityInformation.distance += adjacencyMatrix[currentCity][i];
-                distanceOfTheCity(cityCount, adjacencyMatrix, blBook, i, cityInformation, theFurthestCity);
+                distanceOfTheCity(cityCount, adjacencyMatrix, blBook, i, distance + adjacencyMatrix[currentCity][i], theFurthestCity);
                 // 回溯
-                cityInformation.distance -= adjacencyMatrix[currentCity][i];
                 blBook[i] = false;
             }
         }
@@ -84,16 +83,16 @@ public class Main {
     /** 
      * 计算路费
      * 参数：distance：距离
-     * 返回：路费：int
+     * 返回：int
      * */
+    
     private int travelExpense(int distance) {
-        int travelExpense = 0, halfOfNumber = distance / 2;
+        int halfOfNumber = distance / 2;
         // 累加
         int median = 0 == distance % 2 ? 0 : halfOfNumber + 1;
-        travelExpense = (distance + 1) * halfOfNumber + median;
+        int travelExpense = (distance + 1) * halfOfNumber + median;
         
-        travelExpense += 10 * distance;
-        return travelExpense;
+        return travelExpense + 10 * distance;
     }
 }
 class DistanceOfTheCity {
