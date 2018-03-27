@@ -3,48 +3,70 @@ package myTest;
 import java.math.BigInteger;
 import java.util.*;
 
-// 超时。。。
 public class Main {
-    public int sum = 0;
+    private static final int MODULO = 1000000007;
     public static void main(String[] args) {
         // Start of input
         Scanner sc = new Scanner(System.in);
         int k = sc.nextInt(), l = sc.nextInt();
+		sc.close();
         // End of input
         
 //        // 测试
-//        int k = 4, l = 2;
+//        int k1 = 4, l1 = 2;
+//        int k2 = 100, l2 = 3;
+//        int k3 = 50, l3 = 50;
+//        
+//        Main m = new Main();
+//        System.out.println(m.goodKNumber(k1, l1));
+//        System.out.println(m.goodKNumber(k2, l2));
+//        System.out.println(m.goodKNumber(k3, l3));
         
-        boolean[] disuseBook = new boolean[k];
-        // 第一项不能为 0 
-        disuseBook[0] = true;
-        int[] a = new int[l];
-        Main m = new Main();
-        m.search(k, l, a, disuseBook, 0);
-        System.out.println(m.sum);
+        System.out.println(new Main().goodKNumber(k, l));
     }
-    private void search(int k, int l, int[] a, boolean[] disuseBook, int step) {
-        if (step == l) {
-            sum++;
-            if (1000000007 == sum) {
-                sum = 0;
-            }
-            return;
+    private int goodKNumber(int k, int l){
+        // 存放 K 进制每个基数的非相邻的数目
+        int[] a = new int[k];
+        // 初始化
+        for (int i = 0; i < k; i++) {
+            a[i] = 1;
+        }
+        int flag = l;
+        while (--flag != 0) {
+            a = nextBasicNumber(a, k);
         }
         
-        for (int i = 0; i < k; i++) {
-            if (!disuseBook[i]) {
-                a[step] = i;
-                boolean[] book = new boolean[k];
-                int small = i - 1, big = i + 1;
-                if (small >= 0) {
-                    book[small] = true;
-                }
-                if (big < k) {
-                    book[big] = true;
-                }
-                search(k, l, a, book, step + 1);
+        int sum = 0;
+        for (int i = 1; i < k; i++) {
+            sum += a[i];
+            if (sum > MODULO) {
+                sum -= MODULO;
             }
         }
+        return sum;
+    }
+    /** 
+     * 计算下一个基数的每个基数的非相邻的数目
+     * 参数：a：上一个基数的每个基数的非相邻的数目，k：要求的进制
+     * 返回：int[]：下一个基数的每个基数的非相邻的数目
+     * */
+    private int[] nextBasicNumber(int[] a, int k) {
+        int[] newArray = new int[k];
+        int half = (k + 1) / 2, maxSubscript = k - 1;
+        
+        for (int i = 0; i < half; i++) {
+            for (int j = 0; j < k; j++) {
+                if (j != i - 1 && j != i + 1) {
+                    newArray[i] += a[j];
+                    // 求模
+                    if (newArray[i] > MODULO) {
+                        newArray[i] -= MODULO;
+                    }
+                }
+            }
+            // 数组头尾值相同
+            newArray[maxSubscript - i] = newArray[i];
+        }
+        return newArray;
     }
 } 
